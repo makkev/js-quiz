@@ -29,7 +29,4 @@ function main() {
     }
 }
 
-
-
-
-// main();
+main();
