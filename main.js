@@ -1,32 +1,33 @@
 alert("Welcome to Quiz Ninja!");
 
 const quiz = [
-    ["What is the best programming language?", "JavaScript"],
-    ["What is the worst programming language?", "Cobol"],
-    ["Who created JavaScript", "Brendan Eich"],
+    {language: 'JavaScript', creator: 'Brendan Eich'},
+    {language: 'Ruby', creator: 'Yukiharo Matsumoto'},
+    {language: 'C', creator: 'Dennis Ritchie'},
 ];
 
-function main() {
-    let score = 0;
+const game = {
+    main(quiz) {
+        this.questions = [...quiz];
+        this.score = 0;
 
-    for (const [question, answer] of quiz) {
-        response = prompt(question);
-        checkAnswer(response, answer)
-    }
-    gameOver();
-
-    function checkAnswer(response, answer) {
+        for (question of this.questions) {
+            response = prompt(`Who is the creator of ${question.language}?`);
+            this.checkAnswer(response, question.creator);
+        }
+        this.gameOver();
+    },
+    checkAnswer(response, answer) {
         if (response.toLowerCase() === answer.toLowerCase()) {
             alert("correct!");
-            score++;
+            this.score++;
         } else {
             alert("wrong");
         }
-    }
-
-    function gameOver() {
-        return alert(`Game Over. Score: ${score} point${score > 1 ? "s" : ""}`);
+    },
+    gameOver() {
+        return alert(`Game Over. Score: ${this.score} point${this.score > 1 ? "s" : ""}`);
     }
 }
 
-main();
+game.main(quiz);
