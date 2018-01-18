@@ -5,6 +5,21 @@ const quiz = [
     {language: 'C', creator: 'Dennis Ritchie'},
 ];
 
+function random(a, b=1) {
+    // if only 1 argument is provided, we need to swap the values of a and b
+    if (b ===1) {
+        [a, b] = [b, a];
+    }
+    return Math.floor((b - a + 1) * Math.random()) + a;
+}
+
+function shuffle(array) {
+    for (let i = array.length; i; i--) {
+        let j = random(i) - 1;
+        [array[i - 1], array[j]] = [array[j], array[i - 1]];
+    }
+}
+
 // View Object
 const view = {
     start: document.getElementById('start'),
@@ -50,6 +65,7 @@ const view = {
 // Game Object
 const game = {
     start(quiz) {
+        console.log('start() invoked');
         this.questions = [...quiz];
         this.score = 0;
         view.setup();
@@ -58,7 +74,9 @@ const game = {
         this.timer = setInterval(this.countdown, 1000);
     },
     ask(name) {
+        console.log('ask() invoked');
         if (this.questions.length > 0) {
+            shuffle(this.questions);
             this.question = this.questions.pop();
             const q = `Who is the creator of ${this.question.language}?`;
             view.render(view.question, q);
@@ -67,6 +85,7 @@ const game = {
         }
     },
     checkAnswer(event) {
+        console.log('checkAnswer() invoked');
         event.preventDefault();
         const response = view.response.answer.value;
         const answer = this.question.creator;
@@ -81,6 +100,7 @@ const game = {
         this.ask();
     },
     gameOver() {
+        console.log('gameOver() invoked');
         view.render(view.info, `Game Over. Score: ${this.score} point${this.score > 1 ? "s" : ""}`);
         view.show(view.start);
         view.teardown();
