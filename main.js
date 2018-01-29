@@ -3,6 +3,10 @@ const quiz = [
     {language: 'JavaScript', creator: 'Brendan Eich'},
     {language: 'Ruby', creator: 'Yukiharo Matsumoto'},
     {language: 'C', creator: 'Dennis Ritchie'},
+    {language: 'Python', creator: 'Guido van Rossum'},
+    {language: 'C++', creator: 'Bjarne Stroustrup'},
+    {language: 'C#', creator: 'Microsoft'},
+    {language: 'Lisp', creator: 'John McCarthy'},
 ];
 
 function random(a, b=1) {
@@ -40,10 +44,6 @@ const view = {
         element.style.display = 'none';
     },
     response: document.querySelector('#response'),
-    resetForm() {
-        this.response.answer.value = '';
-        this.response.answer.focus();
-    },
     setup() {
         this.show(this.question);
         this.show(this.response);
@@ -52,7 +52,6 @@ const view = {
         this.render(this.score, game.score);
         this.render(this.result, '');
         this.render(this.info, '');
-        this.resetForm();
     },
     teardown() {
         this.hide(this.question);
@@ -60,6 +59,9 @@ const view = {
         this.show(this.start);
     },
     timer: document.querySelector('#timer strong'),
+    buttons(array) {
+        return array.map(value => `<button>${value}</button>`).join('');
+    }
 };
 
 // Game Object
@@ -75,28 +77,30 @@ const game = {
     },
     ask(name) {
         console.log('ask() invoked');
-        if (this.questions.length > 0) {
+        if (this.questions.length > 2) {
             shuffle(this.questions);
             this.question = this.questions.pop();
+            const options = [this.questions[0].creator, this.questions[1].creator, this.question.creator];
+            shuffle(options);
             const q = `Who is the creator of ${this.question.language}?`;
             view.render(view.question, q);
+            view.render(view.response, view.buttons(options));
         } else {
             this.gameOver();
         }
     },
     checkAnswer(event) {
         console.log('checkAnswer() invoked');
-        event.preventDefault();
-        const response = view.response.answer.value;
+        const response = event.target.textContent;
         const answer = this.question.creator;
-        if (response.toLowerCase() === answer.toLowerCase()) {
+        console.log('response: ' + response);
+        if (response === answer) {
             view.render(view.result, 'Correct', {'class': 'correct'});
             this.score++;
             view.render(view.score, this.score);
         } else {
             view.render(view.result, `Wrong! The correct answer is ${answer}`, {'class': 'wrong'});
         }
-        view.resetForm();
         this.ask();
     },
     gameOver() {
@@ -117,5 +121,4 @@ const game = {
 
 view.start.addEventListener('click', () => game.start(quiz), false);
 
-view.response.addEventListener('submit', (event) => game.checkAnswer(event), false);
-view.hide(view.response);
+view.response.addEventListener('click', (event) => game.checkAnswer(event), false);
